@@ -1,6 +1,6 @@
 const button = createElementFromHTML(`
   <button
-    class="ytp-button"
+    class="ytp-button pip-button"
     data-tooltip-target-id="ytp-autonav-toggle-button"
     style=""
     aria-label="Автовоспроизведение включено"
@@ -19,19 +19,29 @@ const button = createElementFromHTML(`
     </svg>
   </button>`);
 
-const buttonsContainer = document.querySelector('.ytp-right-controls');
+let prevURL = '';
 
-const videoTag = document.querySelector('.video-stream.html5-main-video');
+const interval = setInterval(() => {
+  if (prevURL !== window.location.href) {
+    prevURL = window.location.href;
 
-if ('pictureInPictureEnabled' in document) {
-  button.addEventListener('click', () => {
-    videoTag.requestPictureInPicture().catch(console.log);
-  });
-  buttonsContainer.prepend(button);
-}
+    if (
+      document.querySelector('.pip-button') &&
+      !'pictureInPictureEnabled' in document
+    )
+      return;
+    const buttonsContainer = document.querySelector('.ytp-right-controls');
+    const videoTag = document.querySelector('.video-stream.html5-main-video');
+
+    button.addEventListener('click', () => {
+      videoTag.requestPictureInPicture().catch(console.log);
+    });
+    buttonsContainer.prepend(button);
+  }
+}, 1000);
 
 function createElementFromHTML(htmlString) {
-  var div = document.createElement('div');
+  const div = document.createElement('div');
   div.innerHTML = htmlString.trim();
 
   // Change this to div.childNodes to support multiple top-level nodes.
